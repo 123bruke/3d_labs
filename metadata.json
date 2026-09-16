@@ -1,0 +1,6 @@
+{
+  "name": "Virtual 3D Chemistry Laboratory",
+  "description": "An interactive, physically-grounded 3D/4D Virtual Chemistry Laboratory featuring realistic mass, volume, and liquid density simulation experiments.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
