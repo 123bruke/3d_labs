@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import * as THREE from 'three';
-import { Text } from '@react-three/drei/core/Text';
 import { useLabStore } from '../../store/labStore';
 
 interface DigitalBalance3DProps {
@@ -128,40 +127,7 @@ export const DigitalBalance3D: React.FC<DigitalBalance3DProps> = ({
           <primitive object={displayGlassMaterial} attach="material" />
         </mesh>
 
-        {/* Digital Text Readout */}
-        <Text
-          position={[0.02, 0.01, 0.016]}
-          fontSize={0.024}
-          color="#34d399"
-          anchorX="center"
-          anchorY="middle"
-          font="https://fonts.gstatic.com/s/jetbrainsmono/v18/tDbY2o-flEEny0FZhsfKu5WU4zr3E_al0318TUHzf84.woff2"
-        >
-          {displayValue}
-        </Text>
-
-        {/* Stability & Tare Indicators */}
-        <Text
-          position={[-0.1, 0.01, 0.016]}
-          fontSize={0.01}
-          color={isBalanceStable ? '#10b981' : '#f59e0b'}
-          anchorX="center"
-          anchorY="middle"
-        >
-          {isBalanceStable ? '● STABLE' : '○ SETTLING'}
-        </Text>
-
-        {activeMeasurement.isTared && (
-          <Text
-            position={[-0.1, -0.005, 0.016]}
-            fontSize={0.009}
-            color="#38bdf8"
-            anchorX="center"
-            anchorY="middle"
-          >
-            NET TARE
-          </Text>
-        )}
+        {/* The live measurement is rendered in the glass HUD, avoiding remote font dependencies in WebGL. */}
       </group>
 
       {/* Interactive 3D Buttons on front panel */}
@@ -177,16 +143,6 @@ export const DigitalBalance3D: React.FC<DigitalBalance3DProps> = ({
           <boxGeometry args={[0.065, 0.02, 0.025]} />
           <primitive object={buttonMaterial} attach="material" />
         </mesh>
-        <Text
-          position={[0, 0.011, 0]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          fontSize={0.009}
-          color="#a7f3d0"
-          anchorX="center"
-          anchorY="middle"
-        >
-          TARE
-        </Text>
       </group>
 
       {/* ZERO / RESET BUTTON */}
@@ -201,16 +157,6 @@ export const DigitalBalance3D: React.FC<DigitalBalance3DProps> = ({
           <boxGeometry args={[0.065, 0.02, 0.025]} />
           <primitive object={buttonMaterial} attach="material" />
         </mesh>
-        <Text
-          position={[0, 0.011, 0]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          fontSize={0.009}
-          color="#a7f3d0"
-          anchorX="center"
-          anchorY="middle"
-        >
-          ZERO
-        </Text>
       </group>
     </group>
   );

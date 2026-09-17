@@ -12,12 +12,14 @@ export const EquipmentManager: React.FC = () => {
   const selectedEquipmentInstanceId = useLabStore((state) => state.selectedEquipmentInstanceId);
   const selectEquipmentInstance = useLabStore((state) => state.selectEquipmentInstance);
   const updateEquipmentPosition = useLabStore((state) => state.updateEquipmentPosition);
-  const flowStage = useLabStore((state) => state.flowStage);
+  const moveEquipmentDuringDrag = useLabStore((state) => state.moveEquipmentDuringDrag);
 
   const { raycaster, mouse, camera } = useThree();
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const planeRef = useRef(new THREE.Plane(new THREE.Vector3(0, 1, 0), -0.86)); // Benchtop height Y = 0.86
   const intersectionPoint = useRef(new THREE.Vector3());
+  const pendingPosition = useRef<[number, number, number] | null>(null);
+  const dragFrame = useRef<number | null>(null);
 
   // Handle pointer down on an equipment object
   const handlePointerDown = (instanceId: string, e: any) => {
@@ -41,12 +43,24 @@ export const EquipmentManager: React.FC = () => {
       const clampedX = Math.max(-1.5, Math.min(1.5, x));
       const clampedZ = Math.max(-0.65, Math.min(0.65, z));
 
-      updateEquipmentPosition(draggingId, [clampedX, 0.86, clampedZ]);
+      pendingPosition.current = [clampedX, 0.86, clampedZ];
+      if (dragFrame.current === null) {
+        dragFrame.current = requestAnimationFrame(() => {
+          if (draggingId && pendingPosition.current) {
+            moveEquipmentDuringDrag(draggingId, pendingPosition.current);
+          }
+          dragFrame.current = null;
+        });
+      }
     }
   };
 
   const handlePointerUp = () => {
     if (draggingId) {
+      if (dragFrame.current !== null) cancelAnimationFrame(dragFrame.current);
+      if (pendingPosition.current) updateEquipmentPosition(draggingId, pendingPosition.current);
+      pendingPosition.current = null;
+      dragFrame.current = null;
       setDraggingId(null);
     }
   };
@@ -106,6 +120,7 @@ export const EquipmentManager: React.FC = () => {
               <ReagentBottle3D
                 {...commonProps}
                 materialId={item.currentMaterialId}
+                currentVolume={item.currentVolume}
               />
             )}
           </group>

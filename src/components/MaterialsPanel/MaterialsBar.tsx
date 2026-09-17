@@ -1,10 +1,11 @@
-import React from 'react';
-import { Droplets, Check } from 'lucide-react';
+import React, { useState } from 'react';
+import { Droplets, Check, ChevronDown } from 'lucide-react';
 import { useLabStore } from '../../store/labStore';
 import { MATERIALS_REGISTRY } from '../../chemistry/materials';
 import { MaterialId } from '../../types';
 
 export const MaterialsBar: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const selectedMaterialId = useLabStore((state) => state.selectedMaterialId);
   const selectMaterial = useLabStore((state) => state.selectMaterial);
 
@@ -13,14 +14,15 @@ export const MaterialsBar: React.FC = () => {
   return (
     <div className="absolute bottom-6 right-6 z-20 pointer-events-auto w-52">
       <div className="rounded-2xl bg-[rgba(7,16,12,0.85)] border border-emerald-500/25 shadow-2xl backdrop-blur-xl overflow-hidden">
-        <div className="flex items-center gap-2 px-3 py-2.5 border-b border-emerald-500/20">
+        <button className="w-full flex items-center justify-between gap-2 px-3 py-2.5 border-b border-blue-400/20" onClick={() => setIsOpen((open) => !open)} title="Show materials">
+          <span className="flex items-center gap-2">
           <Droplets className="w-4 h-4 text-emerald-400" />
-          <h3 className="text-xs font-semibold text-emerald-100 tracking-wider uppercase">
-            Materials
-          </h3>
-        </div>
+          <h3 className="text-xs font-semibold text-blue-100 tracking-wider uppercase">Materials</h3>
+          </span>
+          <ChevronDown className={`w-4 h-4 text-blue-300 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </button>
 
-        <div className="p-2 space-y-1.5">
+        {isOpen && <div className="p-2 space-y-1.5">
           {materials.map((mat) => {
             const isSelected = mat.id === selectedMaterialId;
             return (
@@ -55,7 +57,7 @@ export const MaterialsBar: React.FC = () => {
               </button>
             );
           })}
-        </div>
+        </div>}
       </div>
     </div>
   );

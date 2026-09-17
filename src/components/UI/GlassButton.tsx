@@ -28,19 +28,19 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
 
   const variantClasses = {
     primary:
-      'bg-[rgba(10,26,19,0.7)] text-emerald-100 border border-emerald-500/30 hover:bg-[rgba(16,42,30,0.85)] hover:border-emerald-400/60 hover:shadow-[0_0_15px_rgba(52,211,153,0.3)]',
+      'bg-white/95 text-slate-950 border border-white hover:bg-white hover:border-emerald-300 hover:shadow-[0_0_15px_rgba(255,255,255,0.35)]',
     secondary:
-      'bg-[rgba(10,18,14,0.6)] text-slate-300 border border-slate-700/50 hover:bg-[rgba(16,28,22,0.8)] hover:text-emerald-200 hover:border-emerald-500/40',
+      'bg-white/90 text-slate-900 border border-white/80 hover:bg-white hover:border-emerald-300 hover:shadow-[0_0_15px_rgba(255,255,255,0.3)]',
     accent:
-      'bg-[rgba(16,185,129,0.22)] text-emerald-50 border border-emerald-400/50 shadow-[0_0_18px_rgba(16,185,129,0.3)] hover:bg-[rgba(16,185,129,0.35)] hover:border-emerald-300 hover:shadow-[0_0_24px_rgba(52,211,153,0.5)]',
+      'bg-white text-slate-950 border border-white shadow-[0_0_18px_rgba(255,255,255,0.28)] hover:bg-white hover:border-emerald-300 hover:shadow-[0_0_24px_rgba(255,255,255,0.5)]',
     danger:
-      'bg-[rgba(40,12,12,0.65)] text-rose-200 border border-rose-500/30 hover:bg-[rgba(60,16,16,0.8)] hover:border-rose-400/60',
+      'bg-white/95 text-slate-950 border border-white hover:bg-white hover:border-rose-300',
     ghost:
       'bg-transparent text-slate-300 border border-transparent hover:bg-emerald-950/30 hover:text-emerald-300',
   }[variant];
 
   const activeClass = active
-    ? 'ring-1 ring-emerald-400 bg-[rgba(16,46,32,0.9)] text-emerald-200 border-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.4)]'
+    ? 'ring-2 ring-blue-400 bg-white text-slate-950 border-blue-400 shadow-[0_0_20px_rgba(96,165,250,0.5)]'
     : '';
 
   const disabledClass = disabled

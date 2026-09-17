@@ -1,5 +1,5 @@
-import React from 'react';
-import { Scale, Droplets, Gauge, Save, CheckCircle, Clock } from 'lucide-react';
+import React, { useState } from 'react';
+import { Scale, Droplets, Gauge, Save, CheckCircle, Clock, ChevronDown } from 'lucide-react';
 import { useLabStore } from '../../store/labStore';
 import { experimentEngine } from '../../simulation/ExperimentEngine';
 import { GlassCard } from '../UI/GlassCard';
@@ -7,12 +7,15 @@ import { GlassButton } from '../UI/GlassButton';
 import { MATERIALS_REGISTRY } from '../../chemistry/materials';
 
 export const MeasurementPanel: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const activeMeasurement = useLabStore((state) => state.activeMeasurement);
   const isBalanceStable = useLabStore((state) => state.isBalanceStable);
   const tareBalance = useLabStore((state) => state.tareBalance);
   const zeroBalance = useLabStore((state) => state.zeroBalance);
   const selectedMaterialId = useLabStore((state) => state.selectedMaterialId);
   const placedEquipment = useLabStore((state) => state.placedEquipment);
+  const roomTemperature = useLabStore((state) => state.roomTemperature);
+  const flameTemperature = useLabStore((state) => state.flameTemperature);
 
   const activeMaterial = MATERIALS_REGISTRY[selectedMaterialId];
 
@@ -40,12 +43,10 @@ export const MeasurementPanel: React.FC = () => {
   return (
     <div className="absolute top-20 left-6 z-20 pointer-events-auto transition-all animate-in fade-in duration-300">
       <GlassCard dense className="p-3.5 w-76 border-emerald-500/30">
-        <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-emerald-500/20">
+        <button className="w-full flex items-center justify-between pb-2 mb-2.5 border-b border-blue-400/20" onClick={() => setIsOpen((open) => !open)} title="Show scientific readouts">
           <div className="flex items-center gap-2">
             <Gauge className="w-4 h-4 text-emerald-400" />
-            <h3 className="text-xs font-semibold text-emerald-100 font-display-lab tracking-wider uppercase">
-              Scientific Readouts
-            </h3>
+            <h3 className="text-xs font-semibold text-blue-100 font-display-lab tracking-wider uppercase">Readouts</h3>
           </div>
           <div className="flex items-center gap-1.5 text-[10px] font-mono-lab">
             {isBalanceStable ? (
@@ -58,8 +59,10 @@ export const MeasurementPanel: React.FC = () => {
               </span>
             )}
           </div>
-        </div>
+          <ChevronDown className={`w-4 h-4 text-blue-300 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </button>
 
+        {isOpen && <>
         {/* Readouts Grid */}
         <div className="space-y-2 text-xs">
           {/* MASS READOUT */}
@@ -100,10 +103,17 @@ export const MeasurementPanel: React.FC = () => {
               <span className="text-[11px] text-emerald-400/80 font-mono-lab ml-1">g/mL</span>
             </div>
           </div>
+
+          <div className="flex items-center justify-between p-2 rounded-xl bg-blue-950/40 border border-blue-400/25">
+            <span className="text-blue-200">Thermometer</span>
+            <span className="font-mono-lab text-xs text-blue-100">
+              Room {roomTemperature.toFixed(0)}°C / Flame {flameTemperature.toFixed(0)}°C
+            </span>
+          </div>
         </div>
 
         {/* Quick Balance Actions */}
-        <div className="grid grid-cols-3 gap-1.5 mt-3 pt-2.5 border-t border-emerald-500/15">
+        <div className="grid grid-cols-3 gap-1.5 mt-3 pt-2.5 border-t border-blue-400/15">
           <GlassButton
             size="sm"
             variant="secondary"
@@ -129,7 +139,7 @@ export const MeasurementPanel: React.FC = () => {
           >
             Log
           </GlassButton>
-        </div>
+        </div></>}
       </GlassCard>
     </div>
   );

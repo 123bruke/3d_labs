@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   FlaskConical,
   Play,
@@ -13,6 +13,16 @@ import {
   AlertCircle,
   Eye,
   Menu,
+  Sun,
+  Flame,
+  Minus,
+  Volume2,
+  Circle,
+  Square,
+  ArrowUp,
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
 } from 'lucide-react';
 import { useLabStore } from '../../store/labStore';
 import { getExperimentById } from '../../chemistry/experiments';
@@ -23,12 +33,16 @@ interface LabHeaderProps {
   onOpenMaterials: () => void;
   onOpenInfo: () => void;
   onOpenResults: () => void;
+  onToggleLabData: () => void;
+  isLabDataOpen: boolean;
 }
 
 export const LabHeader: React.FC<LabHeaderProps> = ({
   onOpenMaterials,
   onOpenInfo,
   onOpenResults,
+  onToggleLabData,
+  isLabDataOpen,
 }) => {
   const flowStage = useLabStore((state) => state.flowStage);
   const setFlowStage = useLabStore((state) => state.setFlowStage);
@@ -39,11 +53,49 @@ export const LabHeader: React.FC<LabHeaderProps> = ({
   const validationStatus = useLabStore((state) => state.validationStatus);
   const startSimulation = useLabStore((state) => state.startSimulation);
   const resetSimulation = useLabStore((state) => state.resetSimulation);
+  const isLampOn = useLabStore((state) => state.isLampOn);
+  const isHeatOn = useLabStore((state) => state.isHeatOn);
+  const toggleLamp = useLabStore((state) => state.toggleLamp);
+  const toggleHeat = useLabStore((state) => state.toggleHeat);
+  const addWaterVolume = useLabStore((state) => state.addWaterVolume);
+  const selectedEquipmentInstanceId = useLabStore((state) => state.selectedEquipmentInstanceId);
+  const nudgeEquipment = useLabStore((state) => state.nudgeEquipment);
+  const [isControlsOpen, setIsControlsOpen] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const recorderRef = React.useRef<MediaRecorder | null>(null);
+  const chunksRef = React.useRef<Blob[]>([]);
 
   const experiment = getExperimentById(selectedExperimentId);
 
   const handleGenerate = () => {
     validateSetup();
+  };
+
+  const toggleRecording = () => {
+    if (isRecording) {
+      recorderRef.current?.stop();
+      setIsRecording(false);
+      return;
+    }
+    const canvas = document.querySelector('canvas');
+    if (!canvas || !('MediaRecorder' in window)) return;
+    chunksRef.current = [];
+    const recorder = new MediaRecorder(canvas.captureStream(30), { mimeType: 'video/webm' });
+    recorder.ondataavailable = (event) => {
+      if (event.data.size > 0) chunksRef.current.push(event.data);
+    };
+    recorder.onstop = () => {
+      const blob = new Blob(chunksRef.current, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `virtual-chemistry-lab-${Date.now()}.webm`;
+      link.click();
+      URL.revokeObjectURL(url);
+    };
+    recorder.start();
+    recorderRef.current = recorder;
+    setIsRecording(true);
   };
 
   const cameraOptions: { id: CameraPreset; label: string; icon: any }[] = [
@@ -76,89 +128,48 @@ export const LabHeader: React.FC<LabHeaderProps> = ({
             </div>
           </div>
 
-          <GlassButton
-            size="sm"
-            variant="secondary"
-            icon={Info}
-            onClick={onOpenInfo}
-            title="Experiment Theory & Objectives"
-          >
-            Briefing
-          </GlassButton>
         </div>
 
-        {/* Center: Camera Presets Bar */}
-        <div className="pointer-events-auto hidden md:flex items-center gap-1 p-1 rounded-xl bg-black/60 border border-emerald-500/20 backdrop-blur-md">
-          {cameraOptions.map((opt) => (
-            <button
-              key={opt.id}
-              onClick={() => setCameraPreset(opt.id)}
-              className={`px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
-                cameraPreset === opt.id
-                  ? 'bg-emerald-500 text-black font-semibold shadow-[0_0_12px_rgba(52,211,153,0.5)]'
-                  : 'text-slate-300 hover:text-emerald-200 hover:bg-emerald-950/40'
-              }`}
-            >
-              <opt.icon className="w-3.5 h-3.5" />
-              <span>{opt.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Right: Primary Controls */}
-        <div className="pointer-events-auto flex items-center gap-2">
-          {/* Reagents Drawer Button */}
-          <GlassButton
-            size="sm"
-            variant="secondary"
-            icon={Droplets}
-            onClick={onOpenMaterials}
-          >
-            Reagents
-          </GlassButton>
-
-          {/* Generate / Validate Experiment Button */}
-          {flowStage !== 'simulation' ? (
-            <GlassButton
-              size="sm"
-              variant="primary"
-              icon={Sparkles}
-              onClick={handleGenerate}
-            >
-              Generate
-            </GlassButton>
-          ) : null}
-
-          {/* Play Experiment Button */}
-          {flowStage !== 'simulation' ? (
-            <GlassButton
-              size="sm"
-              variant="accent"
-              icon={Play}
-              onClick={startSimulation}
-            >
-              Run
-            </GlassButton>
-          ) : (
-            <GlassButton
-              size="sm"
-              variant="primary"
-              onClick={onOpenResults}
-            >
-              Results
-            </GlassButton>
-          )}
-
-          {/* Reset Button */}
-          <GlassButton
-            size="sm"
-            variant="secondary"
-            icon={RotateCcw}
-            onClick={resetSimulation}
-            title="Reset Experiment Setup"
-          />
-        </div>
+        <button
+          className="lab-white-button pointer-events-auto"
+          onClick={() => setIsControlsOpen((open) => !open)}
+          title="Show laboratory controls"
+        >
+          <Menu className="w-4 h-4" />
+          <span>{isControlsOpen ? 'Hide controls' : 'Open controls'}</span>
+        </button>
       </div>
+
+      {isControlsOpen && (
+        <div className="lab-controls-panel pointer-events-auto self-end w-full max-w-3xl">
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <GlassButton size="sm" variant="secondary" icon={Info} onClick={onOpenInfo}>Briefing</GlassButton>
+            <GlassButton size="sm" variant="secondary" icon={Menu} onClick={onToggleLabData} active={isLabDataOpen}>Lab data</GlassButton>
+            <GlassButton size="sm" variant="secondary" icon={Droplets} onClick={onOpenMaterials}>Reagents</GlassButton>
+            <GlassButton size="sm" variant="secondary" icon={Sun} onClick={toggleLamp} active={isLampOn}>Lamp</GlassButton>
+            <GlassButton size="sm" variant="secondary" icon={Flame} onClick={toggleHeat} active={isHeatOn}>Heat</GlassButton>
+            <GlassButton size="sm" variant="secondary" icon={Volume2} onClick={() => addWaterVolume('beaker-1', 10)}>Water +10 mL</GlassButton>
+            <GlassButton size="sm" variant="secondary" icon={Minus} onClick={() => addWaterVolume('beaker-1', -10)}>Water -10 mL</GlassButton>
+            <GlassButton size="sm" variant={isRecording ? 'danger' : 'secondary'} icon={isRecording ? Square : Circle} onClick={toggleRecording} title="Record only the 3D laboratory canvas">
+              {isRecording ? 'Stop & Download' : 'Record Lab'}
+            </GlassButton>
+            <div className="lab-nudge-pad" title="Move selected object">
+              <button onClick={() => selectedEquipmentInstanceId && nudgeEquipment(selectedEquipmentInstanceId, 0, -0.08)}><ArrowUp className="w-3.5 h-3.5" /></button>
+              <button onClick={() => selectedEquipmentInstanceId && nudgeEquipment(selectedEquipmentInstanceId, -0.08, 0)}><ArrowLeft className="w-3.5 h-3.5" /></button>
+              <button onClick={() => selectedEquipmentInstanceId && nudgeEquipment(selectedEquipmentInstanceId, 0, 0.08)}><ArrowDown className="w-3.5 h-3.5" /></button>
+              <button onClick={() => selectedEquipmentInstanceId && nudgeEquipment(selectedEquipmentInstanceId, 0.08, 0)}><ArrowRight className="w-3.5 h-3.5" /></button>
+            </div>
+            {cameraOptions.map((opt) => (
+              <GlassButton key={opt.id} size="sm" variant="secondary" icon={opt.icon} active={cameraPreset === opt.id} onClick={() => setCameraPreset(opt.id)}>
+                {opt.label}
+              </GlassButton>
+            ))}
+            {flowStage !== 'simulation' && <GlassButton size="sm" variant="primary" icon={Sparkles} onClick={handleGenerate}>Generate</GlassButton>}
+            {flowStage !== 'simulation' ? <GlassButton size="sm" variant="accent" icon={Play} onClick={startSimulation}>Run</GlassButton> : <GlassButton size="sm" variant="primary" onClick={onOpenResults}>Results</GlassButton>}
+            <GlassButton size="sm" variant="secondary" icon={RotateCcw} onClick={resetSimulation} title="Reset Experiment Setup" />
+          </div>
+        </div>
+      )}
 
       {/* Validation Notification Banner if user clicks Generate Setup */}
       {validationStatus && (

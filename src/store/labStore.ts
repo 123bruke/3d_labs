@@ -15,6 +15,7 @@ import { EQUIPMENT_REGISTRY } from '../chemistry/equipment';
 import { MATERIALS_REGISTRY, getMaterialById } from '../chemistry/materials';
 import { ValidationSystem } from '../simulation/ValidationSystem';
 import { MeasurementSystem } from '../simulation/MeasurementSystem';
+import { playLabSound } from '../simulation/labAudio';
 
 const DEFAULT_EQUIPMENT_SETUP: PlacedEquipment[] = [
   {
@@ -92,6 +93,12 @@ interface LabStoreState {
   pouringSourceId: string | null;
   pouringTargetId: string | null;
   pouringProgress: number; // 0 to 1
+
+  // Laboratory instruments and environmental effects
+  isLampOn: boolean;
+  isHeatOn: boolean;
+  roomTemperature: number;
+  flameTemperature: number;
   
   // Observation logs
   recordedObservations: ObservationRecord[];
@@ -102,8 +109,12 @@ interface LabStoreState {
   selectMaterial: (id: MaterialId) => void;
   selectEquipmentInstance: (id: string | null) => void;
   setCameraPreset: (preset: CameraPreset) => void;
+  toggleLamp: () => void;
+  toggleHeat: () => void;
   
   updateEquipmentPosition: (instanceId: string, position: [number, number, number]) => void;
+  moveEquipmentDuringDrag: (instanceId: string, position: [number, number, number]) => void;
+  nudgeEquipment: (instanceId: string, dx: number, dz: number) => void;
   updateEquipmentRotation: (instanceId: string, rotation: [number, number, number]) => void;
   placeOnBalancePan: (instanceId: string) => void;
   removeFromBalancePan: (instanceId: string) => void;
@@ -112,6 +123,7 @@ interface LabStoreState {
   zeroBalance: () => void;
   
   dispenseLiquid: (targetInstanceId: string, volumeMl: number) => void;
+  addWaterVolume: (targetInstanceId: string, volumeMl: number) => void;
   transferLiquid: (sourceInstanceId: string, targetInstanceId: string, volumeMl: number) => void;
   emptyContainer: (instanceId: string) => void;
   
@@ -147,6 +159,11 @@ export const useLabStore = create<LabStoreState>((set, get) => ({
   pouringSourceId: null,
   pouringTargetId: null,
   pouringProgress: 0,
+
+  isLampOn: true,
+  isHeatOn: false,
+  roomTemperature: 22,
+  flameTemperature: 22,
   
   recordedObservations: [],
 
@@ -214,6 +231,19 @@ export const useLabStore = create<LabStoreState>((set, get) => ({
 
   setCameraPreset: (preset) => set({ cameraPreset: preset }),
 
+  toggleLamp: () => {
+    set((state) => ({ isLampOn: !state.isLampOn }));
+    playLabSound('click');
+  },
+
+  toggleHeat: () => {
+    set((state) => ({
+      isHeatOn: !state.isHeatOn,
+      flameTemperature: state.isHeatOn ? 22 : 860,
+    }));
+    playLabSound('heat');
+  },
+
   updateEquipmentPosition: (instanceId, position) => {
     const { placedEquipment, tareOffset, isTared } = get();
     const balancePos = getBalancePosition(placedEquipment);
@@ -249,6 +279,36 @@ export const useLabStore = create<LabStoreState>((set, get) => ({
         isBalanceStable: true,
       });
     }, 400);
+  },
+
+  moveEquipmentDuringDrag: (instanceId, position) => {
+    const { placedEquipment } = get();
+    const balancePos = getBalancePosition(placedEquipment);
+    const dx = Math.abs(position[0] - balancePos[0]);
+    const dz = Math.abs(position[2] - balancePos[2]);
+    const isOverBalance = dx < 0.22 && dz < 0.22;
+    const updated = placedEquipment.map((item) => item.instanceId === instanceId
+      ? {
+          ...item,
+          position: isOverBalance && item.typeId !== 'digital-balance'
+            ? [balancePos[0], balancePos[1] + 0.12, balancePos[2]] as [number, number, number]
+            : position,
+          placedOnBalance: isOverBalance && item.typeId !== 'digital-balance',
+        }
+      : item
+    );
+    set({ placedEquipment: updated, isBalanceStable: false });
+  },
+
+  nudgeEquipment: (instanceId, dx, dz) => {
+    const item = get().placedEquipment.find((equipment) => equipment.instanceId === instanceId);
+    if (!item) return;
+    const nextPosition: [number, number, number] = [
+      Math.max(-1.5, Math.min(1.5, item.position[0] + dx)),
+      0.86,
+      Math.max(-0.65, Math.min(0.65, item.position[2] + dz)),
+    ];
+    get().updateEquipmentPosition(instanceId, nextPosition);
   },
 
   updateEquipmentRotation: (instanceId, rotation) => {
@@ -358,6 +418,7 @@ export const useLabStore = create<LabStoreState>((set, get) => ({
     const target = placedEquipment.find((e) => e.instanceId === targetInstanceId);
 
     if (!target) return;
+    playLabSound('pour');
 
     // Trigger pouring animation state
     set({
@@ -411,12 +472,39 @@ export const useLabStore = create<LabStoreState>((set, get) => ({
     }, 80);
   },
 
+  addWaterVolume: (targetInstanceId, volumeMl) => {
+    if (volumeMl >= 0) {
+      get().dispenseLiquid(targetInstanceId, volumeMl);
+      return;
+    }
+
+    const { placedEquipment, tareOffset, isTared } = get();
+    const updated = placedEquipment.map((item) => {
+      if (item.instanceId !== targetInstanceId) return item;
+      const nextVolume = Math.max(0, item.currentVolume + volumeMl);
+      return {
+        ...item,
+        currentVolume: nextVolume,
+        currentMaterialId: nextVolume > 0 ? item.currentMaterialId : null,
+      };
+    });
+    const reading = MeasurementSystem.computeBalanceReading(
+      updated,
+      tareOffset,
+      isTared,
+      getBalancePosition(updated)
+    );
+    set({ placedEquipment: updated, activeMeasurement: reading });
+    playLabSound('pour');
+  },
+
   transferLiquid: (sourceInstanceId, targetInstanceId, volumeMl) => {
     const { placedEquipment, tareOffset, isTared } = get();
     const source = placedEquipment.find((e) => e.instanceId === sourceInstanceId);
     const target = placedEquipment.find((e) => e.instanceId === targetInstanceId);
 
     if (!source || !target || source.currentVolume <= 0) return;
+    playLabSound('pour');
 
     const actualTransfer = Math.min(volumeMl, source.currentVolume);
     const targetCapacity = EQUIPMENT_REGISTRY[target.typeId]?.capacity || 100;
@@ -512,6 +600,7 @@ export const useLabStore = create<LabStoreState>((set, get) => ({
   },
 
   startSimulation: () => {
+    playLabSound('complete');
     set({
       flowStage: 'simulation',
       isSimulating: true,
@@ -552,6 +641,10 @@ export const useLabStore = create<LabStoreState>((set, get) => ({
       currentStepIndex: 0,
       cameraPreset: 'experiment',
       isPouring: false,
+      isLampOn: true,
+      isHeatOn: false,
+      roomTemperature: 22,
+      flameTemperature: 22,
       validationStatus: null,
     });
   },

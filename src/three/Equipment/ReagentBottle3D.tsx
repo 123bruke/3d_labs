@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import * as THREE from 'three';
-import { Text } from '@react-three/drei/core/Text';
+import { useFrame } from '@react-three/fiber';
 import { MaterialId } from '../../types';
 import { MATERIALS_REGISTRY } from '../../chemistry/materials';
 
@@ -8,6 +8,7 @@ interface ReagentBottle3DProps {
   position?: [number, number, number];
   rotation?: [number, number, number];
   materialId?: MaterialId | null;
+  currentVolume?: number;
   isSelected?: boolean;
   onSelect?: () => void;
 }
@@ -16,11 +17,15 @@ export const ReagentBottle3D: React.FC<ReagentBottle3DProps> = ({
   position = [0.0, 0.86, -0.42],
   rotation = [0, 0, 0],
   materialId = 'water',
+  currentVolume = 450,
   isSelected = false,
   onSelect,
 }) => {
+  const liquidSurfaceRef = useRef<THREE.Mesh>(null);
   const bottleHeight = 0.32;
   const bottleRadius = 0.088;
+  const liquidFraction = Math.min(1, Math.max(0, currentVolume / 450));
+  const liquidHeight = bottleHeight * 0.68 * liquidFraction;
 
   const glassMaterial = useMemo(
     () =>
@@ -59,6 +64,11 @@ export const ReagentBottle3D: React.FC<ReagentBottle3DProps> = ({
       thickness: 0.1,
     });
   }, [activeMaterialConfig]);
+
+  useFrame(({ clock }) => {
+    if (!liquidSurfaceRef.current || currentVolume <= 0) return;
+    liquidSurfaceRef.current.rotation.z = Math.sin(clock.elapsedTime * 1.8) * 0.035;
+  });
 
   return (
     <group
@@ -108,13 +118,19 @@ export const ReagentBottle3D: React.FC<ReagentBottle3DProps> = ({
         </mesh>
       </group>
 
-      {/* Internal Liquid Mesh */}
-      <mesh position={[0, (bottleHeight * 0.7) / 2, 0]}>
-        <cylinderGeometry
-          args={[bottleRadius - 0.005, bottleRadius - 0.005, bottleHeight * 0.68, 32]}
-        />
-        <primitive object={liquidMaterial} attach="material" />
-      </mesh>
+      {/* Internal liquid follows the real stored volume */}
+      {liquidHeight > 0.002 && (
+        <group position={[0, 0.03, 0]}>
+          <mesh position={[0, liquidHeight / 2, 0]}>
+            <cylinderGeometry args={[bottleRadius - 0.005, bottleRadius - 0.005, liquidHeight, 32]} />
+            <primitive object={liquidMaterial} attach="material" />
+          </mesh>
+          <mesh ref={liquidSurfaceRef} position={[0, liquidHeight, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <circleGeometry args={[bottleRadius - 0.006, 32]} />
+            <primitive object={liquidMaterial} attach="material" />
+          </mesh>
+        </group>
+      )}
 
       {/* Chemical Reagent Label Plate */}
       <group position={[0, bottleHeight * 0.42, bottleRadius + 0.002]}>
@@ -126,33 +142,6 @@ export const ReagentBottle3D: React.FC<ReagentBottle3DProps> = ({
           <planeGeometry args={[0.126, 0.086]} />
           <meshBasicMaterial color="#022c22" />
         </mesh>
-        <Text
-          position={[0, 0.024, 0.001]}
-          fontSize={0.012}
-          color="#34d399"
-          anchorX="center"
-          anchorY="middle"
-        >
-          {activeMaterialConfig.name.slice(0, 18)}
-        </Text>
-        <Text
-          position={[0, 0.004, 0.001]}
-          fontSize={0.016}
-          color="#ffffff"
-          anchorX="center"
-          anchorY="middle"
-        >
-          {activeMaterialConfig.formula}
-        </Text>
-        <Text
-          position={[0, -0.02, 0.001]}
-          fontSize={0.009}
-          color="#a7f3d0"
-          anchorX="center"
-          anchorY="middle"
-        >
-          ρ = {activeMaterialConfig.density.toFixed(3)} g/mL
-        </Text>
       </group>
     </group>
   );

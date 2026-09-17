@@ -1,7 +1,8 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import * as THREE from 'three';
 import { Canvas } from '@react-three/fiber';
 import { LabRoom } from './Environment/LabRoom';
+import { LabEffects } from './Environment/LabEffects';
 import { EquipmentManager } from './Interaction/EquipmentManager';
 import { PouringStream3D } from './Equipment/PouringStream3D';
 import { LabCameraController } from './Camera/LabCameraController';
@@ -10,7 +11,7 @@ export const LabCanvas: React.FC = () => {
   return (
     <div className="w-full h-full relative select-none">
       <Canvas
-        shadows
+        shadows="basic"
         dpr={[1, 2]}
         camera={{ position: [0, 1.9, 3.1], fov: 45, near: 0.05, far: 60 }}
         gl={{
@@ -22,14 +23,14 @@ export const LabCanvas: React.FC = () => {
         onCreated={({ gl }) => {
           gl.toneMapping = THREE.ACESFilmicToneMapping;
           gl.toneMappingExposure = 1.15;
+          gl.shadowMap.type = THREE.PCFShadowMap;
         }}
         className="w-full h-full"
       >
         <color attach="background" args={['#0c1512']} />
         <fog attach="fog" args={['#0c1512', 8, 18]} />
 
-        <Suspense fallback={null}>
-          {/* Scientific Laboratory Lighting Rig */}
+        {/* Scientific Laboratory Lighting Rig */}
           <hemisphereLight
             intensity={1.15}
             color="#d9f7ea"
@@ -85,12 +86,12 @@ export const LabCanvas: React.FC = () => {
             distance={10}
           />
 
-          {/* 3D Scene Components */}
-          <LabRoom />
-          <EquipmentManager />
-          <PouringStream3D />
-          <LabCameraController />
-        </Suspense>
+        {/* 3D Scene Components */}
+        <LabRoom />
+        <LabEffects />
+        <EquipmentManager />
+        <PouringStream3D />
+        <LabCameraController />
       </Canvas>
     </div>
   );

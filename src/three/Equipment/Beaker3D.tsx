@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import * as THREE from 'three';
-import { Text } from '@react-three/drei/core/Text';
+import { useFrame } from '@react-three/fiber';
 import { MaterialId } from '../../types';
 import { MATERIALS_REGISTRY } from '../../chemistry/materials';
 
@@ -21,6 +21,7 @@ export const Beaker3D: React.FC<Beaker3DProps> = ({
   isSelected = false,
   onSelect,
 }) => {
+  const liquidSurfaceRef = useRef<THREE.Mesh>(null);
   const maxCapacity = 250;
   const beakerHeight = 0.22;
   const beakerRadius = 0.082;
@@ -56,6 +57,11 @@ export const Beaker3D: React.FC<Beaker3DProps> = ({
       reflectivity: 0.7,
     });
   }, [activeMaterialConfig]);
+
+  useFrame(({ clock }) => {
+    if (!liquidSurfaceRef.current || currentVolume <= 0) return;
+    liquidSurfaceRef.current.scale.set(1 + Math.sin(clock.elapsedTime * 2.4) * 0.025, 1, 1 - Math.sin(clock.elapsedTime * 2.4) * 0.025);
+  });
 
   const tickMarkMaterial = useMemo(
     () =>
@@ -114,28 +120,9 @@ export const Beaker3D: React.FC<Beaker3DProps> = ({
               <boxGeometry args={[0.03, 0.0018, 0.001]} />
               <primitive object={tickMarkMaterial} attach="material" />
             </mesh>
-            <Text
-              position={[0.032, 0, 0]}
-              fontSize={0.013}
-              color="#ffffff"
-              anchorX="left"
-              anchorY="middle"
-            >
-              {ml}
-            </Text>
           </group>
         );
       })}
-
-      <Text
-        position={[0, beakerHeight - 0.025, beakerRadius + 0.001]}
-        fontSize={0.012}
-        color="#a7f3d0"
-        anchorX="center"
-        anchorY="middle"
-      >
-        APPROX. 250 mL
-      </Text>
 
       {/* Dynamic Simulated Liquid in Beaker */}
       {currentVolume > 0 && liquidHeight > 0.005 && (
@@ -149,7 +136,7 @@ export const Beaker3D: React.FC<Beaker3DProps> = ({
           </mesh>
 
           {/* Meniscus / Liquid Top Surface */}
-          <mesh position={[0, liquidHeight, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <mesh ref={liquidSurfaceRef} position={[0, liquidHeight, 0]} rotation={[-Math.PI / 2, 0, 0]}>
             <circleGeometry args={[beakerRadius - 0.003, 32]} />
             <primitive object={liquidMaterial} attach="material" />
           </mesh>

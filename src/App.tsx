@@ -17,6 +17,7 @@ export default function App() {
   const [isMaterialsOpen, setIsMaterialsOpen] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [isResultsOpen, setIsResultsOpen] = useState(false);
+  const [isLabDataOpen, setIsLabDataOpen] = useState(false);
 
   const showHud = flowStage === 'lab_builder' || flowStage === 'simulation' || flowStage === 'intro' || flowStage === 'results';
 
@@ -34,12 +35,14 @@ export default function App() {
             onOpenMaterials={() => setIsMaterialsOpen(true)}
             onOpenInfo={() => setIsInfoOpen(true)}
             onOpenResults={() => setIsResultsOpen(true)}
+            onToggleLabData={() => setIsLabDataOpen((open) => !open)}
+            isLabDataOpen={isLabDataOpen}
           />
 
-          <MeasurementPanel />
+          {isLabDataOpen && <MeasurementPanel />}
           <ObjectInspector />
-          <MaterialsBar />
-          <ExperimentTimeline />
+          {isLabDataOpen && <MaterialsBar />}
+          {isLabDataOpen && <ExperimentTimeline />}
         </div>
       )}
 

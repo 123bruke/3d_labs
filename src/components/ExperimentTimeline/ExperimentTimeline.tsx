@@ -1,11 +1,12 @@
-import React from 'react';
-import { CheckCircle2, Circle, ChevronRight, Lightbulb } from 'lucide-react';
+import React, { useState } from 'react';
+import { CheckCircle2, Circle, ChevronRight, Lightbulb, ChevronDown } from 'lucide-react';
 import { useLabStore } from '../../store/labStore';
 import { getExperimentById } from '../../chemistry/experiments';
 import { GlassCard } from '../UI/GlassCard';
 import { GlassButton } from '../UI/GlassButton';
 
 export const ExperimentTimeline: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const selectedExperimentId = useLabStore((state) => state.selectedExperimentId);
   const currentStepIndex = useLabStore((state) => state.currentStepIndex);
   const advanceStep = useLabStore((state) => state.advanceStep);
@@ -18,7 +19,7 @@ export const ExperimentTimeline: React.FC = () => {
   return (
     <div className="absolute bottom-6 left-6 z-20 pointer-events-auto max-w-md w-full transition-all">
       <GlassCard dense className="p-4 border-emerald-500/30">
-        <div className="flex items-center justify-between pb-2 mb-2 border-b border-emerald-500/20">
+        <button className="w-full flex items-center justify-between pb-2 mb-2 border-b border-blue-400/20" onClick={() => setIsOpen((open) => !open)} title="Show experiment steps">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
             <h4 className="text-xs font-semibold text-emerald-200 font-display-lab tracking-wider uppercase">
@@ -28,7 +29,10 @@ export const ExperimentTimeline: React.FC = () => {
           <span className="text-[10px] font-mono-lab text-emerald-400/80">
             {Math.round(((currentStepIndex + 1) / experiment.steps.length) * 100)}%
           </span>
-        </div>
+          <ChevronDown className={`w-4 h-4 text-blue-300 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </button>
+
+        {isOpen && <>
 
         {/* Step Instruction */}
         <p className="text-xs text-slate-200 leading-relaxed min-h-[36px]">
@@ -87,7 +91,7 @@ export const ExperimentTimeline: React.FC = () => {
               </GlassButton>
             )}
           </div>
-        </div>
+        </div></>}
       </GlassCard>
     </div>
   );

@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import * as THREE from 'three';
-import { Text } from '@react-three/drei/core/Text';
 import { MaterialId } from '../../types';
 import { MATERIALS_REGISTRY } from '../../chemistry/materials';
 
@@ -132,30 +131,9 @@ export const MeasuringCylinder3D: React.FC<MeasuringCylinder3DProps> = ({
               </mesh>
             )}
 
-            {/* Label for major ticks */}
-            <Text
-              position={[0.024, 0, 0]}
-              fontSize={0.011}
-              color="#ffffff"
-              anchorX="left"
-              anchorY="middle"
-            >
-              {ml}
-            </Text>
           </group>
         );
       })}
-
-      {/* Units header text */}
-      <Text
-        position={[0, 0.03 + cylinderHeight - 0.02, cylinderRadius + 0.001]}
-        fontSize={0.013}
-        color="#a7f3d0"
-        anchorX="center"
-        anchorY="middle"
-      >
-        mL (20°C)
-      </Text>
 
       {/* Dynamic Simulated Liquid */}
       {currentVolume > 0 && liquidHeight > 0.005 && (
