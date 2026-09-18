@@ -1,228 +1,210 @@
+<div align="center">
+
 # Virtual 3D Chemistry Laboratory
 
-A physics-driven, interactive chemistry learning lab built with React, Vite, and Three.js. This project lets users explore realistic laboratory workflows in a 3D environment, measure mass and volume, compare liquid densities, and validate experimental setup through guided chemistry experiments.
+**A hands-on chemistry lab for the browser.**
 
-<p align="center">
-  <img src="https://img.shields.io/badge/TypeScript-5.8-3178C6?style=for-the-badge&logo=typescript" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react" alt="React 19" />
-  <img src="https://img.shields.io/badge/Three.js-0.186-000000?style=for-the-badge&logo=three.js" alt="Three.js" />
-  <img src="https://img.shields.io/badge/Vite-6-646CFF?style=for-the-badge&logo=vite" alt="Vite" />
+Explore laboratory equipment, measure mass and volume, transfer liquids, and calculate density in an interactive 3D workspace built for learning by doing.
+
+<p>
+  <a href="https://github.com/123bruke/3d_labs"><img src="https://img.shields.io/badge/GitHub-123bruke%2F3d__labs-181717?style=flat-square&logo=github" alt="GitHub repository" /></a>
+  <img src="https://img.shields.io/badge/TypeScript-5.8-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=20232A" alt="React 19" />
+  <img src="https://img.shields.io/badge/Three.js-0.186-000000?style=flat-square&logo=three.js&logoColor=white" alt="Three.js" />
+  <img src="https://img.shields.io/badge/Vite-6-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite" />
 </p>
 
-## Overview
+</div>
 
-The Virtual 3D Chemistry Laboratory simulates a realistic chemistry workspace where students and users can:
+---
 
-- drag and manipulate scientific equipment in a 3D lab
-- place glassware on a digital balance
-- tare and measure mass accurately
-- dispense and transfer liquids between containers
-- calculate density and other fundamental lab values
-- follow structured experiments with validation and step-by-step guidance
-- iterate on experiments in a controlled, visual learning environment
+## What is this?
 
-This project is designed to blend educational lab workflows with interactive simulation, making it suitable for chemistry instruction, concept demos, and experimentation prototypes.
+The Virtual 3D Chemistry Laboratory is an interactive learning environment where chemistry concepts become something you can see and manipulate.
 
-## Features
+Instead of only reading about tare measurements, menisci, or density, you can set up the equipment, pour the liquid, watch the balance settle, and record the result. The goal is not to replace a real laboratory—it is to make the reasoning behind common laboratory procedures easier to understand and practice.
 
-### Interactive 3D lab scene
-- Real-time laboratory layout with equipment, reagents, and measurement tools
-- Camera presets for overview and close-up inspection
-- 3D object interaction and placement logic
-- Dynamic lab behavior and visual feedback
+The project currently includes two guided experiments:
 
-### Chemistry experiments
-The app includes guided experiment definitions such as:
+- **Mass and Volume Measurement** — practice taring a balance, reading a graduated cylinder, and comparing the mass and volume of water.
+- **Density of Liquids** — measure mass and volume, calculate `ρ = m / V`, and compare water, ethanol, glycerol, and mineral oil.
 
-- Mass and Volume Measurement
-- Density of Liquids
+## Screenshots
 
-Each experiment includes:
-- objectives and scientific principles
-- required equipment and materials
-- step-by-step instructions
-- validation logic
-- measurement interpretation and trial completion
+> The repository does not currently contain committed screenshot files. The image slots below are ready for project screenshots to be added under `docs/screenshots/`.
 
-### Simulation and measurement systems
-- mass readings based on tare and vessel state
-- liquid volume tracking across beakers, cylinders, and reagent bottles
-- real-time measurement calculations
-- experiment validation and completion checks
+<!--
+After adding screenshots, replace the paths below with the actual files:
 
-### Modern UI and state management
-- React 19 application architecture
-- Zustand store for lab state and experiment flow
-- modular component structure for panels, drawers, and overlays
-- polished dark lab interface with responsive layout
+![3D laboratory overview](docs/screenshots/lab-overview.png)
+*The main 3D workspace with the balance, graduated cylinder, beaker, and reagent dispenser.*
 
-### AI integration-ready configuration
-The project includes environment variables for Gemini API usage and app URL configuration, making it compatible with AI Studio and server-side AI workflows.
+![Experiment workflow](docs/screenshots/experiment-workflow.png)
+*The guided experiment panel showing the current procedure and measurements.*
 
-## Tech Stack
+![Density results](docs/screenshots/density-results.png)
+*The results view for comparing measured and reference liquid densities.*
+-->
 
-- React 19
-- TypeScript
-- Vite
-- Three.js / React Three Fiber
-- @react-three/drei
-- Zustand
-- Tailwind CSS
-- Google GenAI SDK
-- Express
-- lucide-react and motion for UI polish
+<p align="center">
+  <em>Interactive 3D workspace · Guided experiments · Live measurements</em>
+</p>
 
-## Project Structure
+## Highlights
+
+### A lab you can interact with
+
+- Move and position equipment on the workbench.
+- Place containers on the digital balance.
+- Switch between overview and experiment camera views.
+- Inspect equipment and measurements through the lab HUD.
+- Toggle laboratory lighting and heat effects.
+
+### Measurements that respond to your actions
+
+- Tare the balance to remove container mass.
+- Track liquid volume in each container.
+- Dispense liquid from the reagent bottle.
+- Transfer liquid between the beaker and graduated cylinder.
+- Let the balance stabilize after equipment or liquid changes.
+- Record observations as you work through an experiment.
+
+### Guided scientific workflows
+
+Each experiment is represented as structured data containing its objectives, principles, required equipment, materials, formulas, steps, and hints. The validation system checks whether the workstation is ready before the simulation begins.
+
+## How the experience works
+
+1. **Choose an experiment** from the experiment selector.
+2. **Prepare the workstation** with the required equipment.
+3. **Set up the measurement** by placing a container on the balance and taring it.
+4. **Add or transfer liquid** using the interactive controls.
+5. **Read the result** from the balance and graduated cylinder.
+6. **Calculate and record** the relevant measurement or density.
+7. **Review the result** and reset the lab for another trial.
+
+## Built with
+
+| Area | Technology |
+| --- | --- |
+| UI | React 19, TypeScript |
+| 3D rendering | Three.js, React Three Fiber, `@react-three/drei` |
+| State | Zustand |
+| Styling | Tailwind CSS and custom CSS |
+| Build tooling | Vite, esbuild |
+| Motion and icons | Motion, lucide-react |
+| AI integration | Google GenAI SDK |
+| Server support | Express and dotenv |
+
+## Project structure
 
 ```text
-.
-├── .env.example
-├── .gitignore
-├── index.html
-├── metadata.json
-├── package.json
-├── package-lock.json
-├── tsconfig.json
-├── vite.config.ts
-├── src/
-│   ├── App.tsx
-│   ├── index.css
-│   ├── main.tsx
-│   ├── chemistry/
-│   │   ├── equipment.ts
-│   │   ├── experiments.ts
-│   │   └── materials.ts
-│   ├── components/
-│   │   ├── ExperimentInfo/
-│   │   ├── ExperimentSelector/
-│   │   ├── ExperimentTimeline/
-│   │   ├── Intro/
-│   │   ├── MaterialsPanel/
-│   │   ├── MeasurementPanel/
-│   │   ├── Navigation/
-│   │   ├── ResultPanel/
-│   │   └── UI/
-│   ├── simulation/
-│   │   ├── ExperimentEngine.ts
-│   │   ├── MeasurementSystem.ts
-│   │   ├── ValidationSystem.ts
-│   │   └── labAudio.ts
-│   ├── store/
-│   │   └── labStore.ts
-│   ├── three/
-│   ├── types/
-│   └── ...
-└── README.md
+src/
+├── chemistry/                 # Experiment, equipment, and material definitions
+│   ├── equipment.ts
+│   ├── experiments.ts
+│   └── materials.ts
+├── components/               # Interface panels, drawers, modals, and navigation
+├── simulation/               # Measurements, validation, experiment flow, and audio
+│   ├── ExperimentEngine.ts
+│   ├── MeasurementSystem.ts
+│   ├── ValidationSystem.ts
+│   └── labAudio.ts
+├── store/                    # Zustand laboratory state
+│   └── labStore.ts
+├── three/                    # 3D scene and React Three Fiber objects
+├── types/                    # Shared TypeScript types
+├── App.tsx                   # Application composition and flow overlays
+└── main.tsx                  # Frontend entry point
 ```
 
-## Getting Started
+## Run it locally
 
-### Prerequisites
+### Requirements
 
-- Node.js 20+
+- Node.js 20 or newer
 - npm or Bun
+- A browser with WebGL support
 
-### Install dependencies
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/123bruke/3d_labs.git
+cd 3d_labs
+```
+
+### 2. Install dependencies
+
+Using npm:
 
 ```bash
 npm install
 ```
 
-or
+Or using Bun:
 
 ```bash
 bun install
 ```
 
-### Configure environment variables
+### 3. Configure your environment
 
-Copy the example environment file and update the values:
+Create a local environment file from the example:
 
 ```bash
 cp .env.example .env
 ```
 
-Example values:
+Then update the values when your environment requires them:
 
 ```env
 GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
 APP_URL="http://localhost:3000"
 ```
 
-> The repository includes `.env.example` for local configuration and AI Studio secret injection.
+`GEMINI_API_KEY` is intended for Gemini-powered functionality. Do not commit real API keys to the repository. In AI Studio, configure secrets through the platform's Secrets panel instead of placing them in source control.
 
-### Run the app
+### 4. Start the development server
 
 ```bash
 npm run dev
 ```
 
-Then open:
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-```text
-http://localhost:3000
-```
+## Available commands
 
-## Available Scripts
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start Vite on port `3000` |
+| `npm run build` | Build the app for production |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Run TypeScript without emitting files |
+| `npm run clean` | Remove generated build artifacts |
 
-```bash
-npm run dev      # start the Vite dev server on port 3000
-npm run build    # create a production build
-npm run preview  # preview the production build
-npm run lint     # run TypeScript checks
-npm run clean    # remove build artifacts
-```
+## A note on simulation accuracy
 
-## Laboratory Workflow
-
-1. Select an experiment from the lab selector.
-2. Prepare the workstation with required equipment.
-3. Place containers on the balance and tare as needed.
-4. Dispense or transfer liquids between vessels.
-5. Observe mass, volume, and physical behavior.
-6. Validate the setup and complete the experiment steps.
-7. Log observations and compare results to expected scientific values.
-
-## Experiment Examples
-
-### Mass and Volume Measurement
-A beginner experiment focused on:
-- tare mass correction
-- graduated cylinder reading
-- meniscus measurement
-- relationship between volume and mass for water
-
-### Density of Liquids
-A comparison-based experiment covering:
-- mass-to-volume ratio
-- density calculation
-- differences between water, ethanol, glycerol, and mineral oil
-- theoretical vs. observed values
-
-## Notes
-
-This project is currently structured as a front-end simulation experience with a chemistry-learning workflow and support for AI-enabled app functionality. It is especially well suited for educational prototypes, interactive demonstrations, and experimentation-driven UI design.
-
-## License
-
-This project does not currently declare a license in the repository metadata. If you intend to distribute or publish it publicly, add a license file and choose a license that matches your use case.
+This is an educational simulation, not a laboratory-grade measurement instrument. Values are modeled to support the learning workflow, including balance readings, liquid capacities, tare offsets, density comparisons, and temperature-related lab state. Results should not be used for real-world chemical, medical, or engineering decisions.
 
 ## Contributing
 
-Contributions are welcome. If you plan to improve the experiment logic, visual fidelity, or simulation realism, please:
+If you have an idea for a new experiment, a more realistic interaction, or a better way to explain a chemistry concept, contributions are welcome.
 
-1. fork the repository
-2. create a feature branch
-3. submit a pull request with a clear description of the changes
+1. Fork the repository.
+2. Create a branch: `git checkout -b feature/my-improvement`.
+3. Make your changes and run `npm run lint` and `npm run build`.
+4. Open a pull request with a short explanation and screenshots or a screen recording when the change affects the interface.
+
+## License
+
+No license has been declared for this repository yet. Until a license is added, the code should be treated as **all rights reserved**. If you plan to share or reuse the project, please add a license that matches your intended use.
 
 ## Acknowledgements
 
-This project uses:
-- React + Vite for the frontend app shell
-- Three.js and React Three Fiber for 3D rendering
-- Google GenAI support for AI-enhanced lab workflows
-- educational chemistry concepts modeled into a game-like simulation experience
+This project brings together React, Three.js, React Three Fiber, Zustand, Tailwind CSS, and the Google GenAI SDK to create a more approachable way to learn fundamental laboratory procedures.
 
 ---
 
-Built for interactive chemistry education and 3D lab experimentation.
+<div align="center">
+  Made for curious learners who would rather <strong>try the experiment</strong> than only read about it.
+</div>
