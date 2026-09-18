@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 820" role="img" aria-labelledby="title desc">
+  <title id="title">Virtual 3D Chemistry Laboratory overview</title>
+  <desc id="desc">A branded preview illustration of the virtual chemistry laboratory workspace.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0b1716"/><stop offset="1" stop-color="#172a27"/></linearGradient>
+    <linearGradient id="bench" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#355650"/><stop offset="1" stop-color="#182b29"/></linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c9fff1" stop-opacity=".3"/><stop offset="1" stop-color="#62d4bb" stop-opacity=".08"/></linearGradient>
+    <filter id="shadow"><feGaussianBlur stdDeviation="12"/></filter>
+  </defs>
+  <rect width="1400" height="820" fill="url(#bg)"/>
+  <circle cx="1120" cy="140" r="190" fill="#55d6b5" opacity=".08" filter="url(#shadow)"/>
+  <rect x="40" y="38" width="1320" height="72" rx="18" fill="#132421" stroke="#3d6d63"/>
+  <text x="76" y="83" fill="#b9f6e5" font-family="Arial, sans-serif" font-size="25" font-weight="700">VIRTUAL CHEMISTRY LAB</text>
+  <text x="1090" y="82" fill="#9eb9b1" font-family="Arial, sans-serif" font-size="17">OVERVIEW  •  LAB DATA  •  RESULTS</text>
+  <rect x="70" y="150" width="1260" height="560" rx="24" fill="#10201e" stroke="#2e5049"/>
+  <rect x="130" y="490" width="1140" height="145" rx="12" fill="url(#bench)" stroke="#50776d"/>
+  <path d="M160 520h1080M190 560h1020M220 600h960" stroke="#6e9b8e" opacity=".22" stroke-width="3"/>
+  <g transform="translate(220 380)"><rect width="270" height="108" rx="14" fill="#203b37" stroke="#79a99d" stroke-width="3"/><rect x="45" y="28" width="180" height="40" rx="7" fill="#071513"/><text x="83" y="56" fill="#91f2d4" font-family="monospace" font-size="22">0.00 g</text><text x="77" y="92" fill="#bdd8d0" font-family="Arial" font-size="15">PRECISION BALANCE</text></g>
+  <g transform="translate(600 250)"><path d="M30 0h120l-18 248H48z" fill="url(#glass)" stroke="#a9ead9" stroke-width="4"/><path d="M52 176h76v68H47z" fill="#5dd2b1" opacity=".62"/><path d="M48 176h80" stroke="#d3fff3" stroke-width="4"/><path d="M145 32h45M140 70h50M136 108h54M132 146h58M129 184h61" stroke="#c0e9df" stroke-width="3"/><text x="32" y="282" fill="#c5e9e1" font-family="Arial" font-size="17">100 mL CYLINDER</text></g>
+  <g transform="translate(900 410)"><path d="M0 25h210l-15 150H18z" fill="url(#glass)" stroke="#a9ead9" stroke-width="4"/><path d="M18 115h180v60H18z" fill="#70cdb4" opacity=".55"/><path d="M18 115h180" stroke="#d3fff3" stroke-width="4"/><text x="45" y="210" fill="#c5e9e1" font-family="Arial" font-size="17">250 mL BEAKER</text></g>
+  <g transform="translate(1070 215)"><rect width="125" height="190" rx="20" fill="#284943" stroke="#a9ead9" stroke-width="3"/><path d="M20 88h85v84H20z" fill="#55bca1" opacity=".7"/><path d="M34 26h58v42H34z" fill="#bddfd5" opacity=".45"/><text x="17" y="225" fill="#c5e9e1" font-family="Arial" font-size="15">REAGENT BOTTLE</text></g>
+  <rect x="92" y="672" width="1216" height="28" rx="14" fill="#0a1514"/><circle cx="115" cy="686" r="7" fill="#65e0bd"/><text x="136" y="692" fill="#a7c9c0" font-family="Arial" font-size="15">Interactive workstation ready</text>
+</svg>

@@ -29,49 +29,40 @@ The project currently includes two guided experiments:
 - **Mass and Volume Measurement** — practice taring a balance, reading a graduated cylinder, and comparing the mass and volume of water.
 - **Density of Liquids** — measure mass and volume, calculate `ρ = m / V`, and compare water, ethanol, glycerol, and mineral oil.
 
-## Screenshots
+## See it in action
 
-> The repository does not currently contain committed screenshot files. The image slots below are ready for project screenshots to be added under `docs/screenshots/`.
+These branded preview images are included in the repository so the project has a visual introduction even before a live deployment is available.
 
-<!--
-After adding screenshots, replace the paths below with the actual files:
+### The 3D laboratory workspace
 
-![3D laboratory overview](docs/screenshots/lab-overview.png)
-*The main 3D workspace with the balance, graduated cylinder, beaker, and reagent dispenser.*
+![Virtual 3D chemistry laboratory overview](docs/screenshots/lab-overview.svg)
 
-![Experiment workflow](docs/screenshots/experiment-workflow.png)
-*The guided experiment panel showing the current procedure and measurements.*
+*The main workspace brings the balance, graduated cylinder, beaker, and reagent dispenser together in one interactive scene.*
 
-![Density results](docs/screenshots/density-results.png)
-*The results view for comparing measured and reference liquid densities.*
--->
+### Guided experiment workflow
 
-<p align="center">
-  <em>Interactive 3D workspace · Guided experiments · Live measurements</em>
-</p>
+![Guided experiment workflow](docs/screenshots/experiment-workflow.svg)
+
+*Experiments are broken into clear steps while the measurement panel keeps the important readings visible.*
+
+### Density results
+
+![Density comparison results](docs/screenshots/density-results.svg)
+
+*The results view makes it easy to compare measured density with reference values.*
+
+> **Note:** The images above are lightweight project preview illustrations created for the README. Replace them with captured application screenshots in the same folder whenever you have a deployed or running build.
 
 ## Highlights
 
-### A lab you can interact with
-
-- Move and position equipment on the workbench.
-- Place containers on the digital balance.
+- Move and position equipment on the 3D workbench.
+- Place containers on the digital balance and tare the vessel mass.
+- Dispense and transfer liquids between containers.
+- Track volume and balance readings as the scene changes.
+- Follow guided experiment steps with hints and validation.
+- Record observations and review the final result.
 - Switch between overview and experiment camera views.
-- Inspect equipment and measurements through the lab HUD.
 - Toggle laboratory lighting and heat effects.
-
-### Measurements that respond to your actions
-
-- Tare the balance to remove container mass.
-- Track liquid volume in each container.
-- Dispense liquid from the reagent bottle.
-- Transfer liquid between the beaker and graduated cylinder.
-- Let the balance stabilize after equipment or liquid changes.
-- Record observations as you work through an experiment.
-
-### Guided scientific workflows
-
-Each experiment is represented as structured data containing its objectives, principles, required equipment, materials, formulas, steps, and hints. The validation system checks whether the workstation is ready before the simulation begins.
 
 ## How the experience works
 
@@ -101,21 +92,16 @@ Each experiment is represented as structured data containing its objectives, pri
 ```text
 src/
 ├── chemistry/                 # Experiment, equipment, and material definitions
-│   ├── equipment.ts
-│   ├── experiments.ts
-│   └── materials.ts
 ├── components/               # Interface panels, drawers, modals, and navigation
 ├── simulation/               # Measurements, validation, experiment flow, and audio
-│   ├── ExperimentEngine.ts
-│   ├── MeasurementSystem.ts
-│   ├── ValidationSystem.ts
-│   └── labAudio.ts
 ├── store/                    # Zustand laboratory state
-│   └── labStore.ts
 ├── three/                    # 3D scene and React Three Fiber objects
 ├── types/                    # Shared TypeScript types
 ├── App.tsx                   # Application composition and flow overlays
 └── main.tsx                  # Frontend entry point
+
+docs/
+└── screenshots/              # README preview images
 ```
 
 ## Run it locally
@@ -126,51 +112,26 @@ src/
 - npm or Bun
 - A browser with WebGL support
 
-### 1. Clone the repository
+### Install and start
 
 ```bash
 git clone https://github.com/123bruke/3d_labs.git
 cd 3d_labs
-```
-
-### 2. Install dependencies
-
-Using npm:
-
-```bash
 npm install
-```
-
-Or using Bun:
-
-```bash
-bun install
-```
-
-### 3. Configure your environment
-
-Create a local environment file from the example:
-
-```bash
 cp .env.example .env
+npm run dev
 ```
 
-Then update the values when your environment requires them:
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+For local configuration, update `.env` when needed:
 
 ```env
 GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
 APP_URL="http://localhost:3000"
 ```
 
-`GEMINI_API_KEY` is intended for Gemini-powered functionality. Do not commit real API keys to the repository. In AI Studio, configure secrets through the platform's Secrets panel instead of placing them in source control.
-
-### 4. Start the development server
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Do not commit real API keys. In AI Studio, configure secrets through the platform's Secrets panel.
 
 ## Available commands
 
@@ -197,11 +158,7 @@ If you have an idea for a new experiment, a more realistic interaction, or a bet
 
 ## License
 
-No license has been declared for this repository yet. Until a license is added, the code should be treated as **all rights reserved**. If you plan to share or reuse the project, please add a license that matches your intended use.
-
-## Acknowledgements
-
-This project brings together React, Three.js, React Three Fiber, Zustand, Tailwind CSS, and the Google GenAI SDK to create a more approachable way to learn fundamental laboratory procedures.
+No license has been declared for this repository yet. Until a license is added, the code should be treated as **all rights reserved**. If you plan to share or reuse the project, add a license that matches your intended use.
 
 ---
 
